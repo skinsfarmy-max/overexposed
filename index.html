@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OVEREXPOSED</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #8c19ff;
+            --bg-black: #0a0a0a;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Inter', sans-serif;
+            background-color: #000;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .bg-layer {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #000000 15%, #1a0033 45%, #050505 70%, #2d004d 100%);
+            background-size: 300% 300%;
+            animation: flow 8s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes flow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Контейнер */
+        .main-container {
+            display: flex;
+            flex-direction: row;
+            height: 100vh;
+            padding: 20px;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .side-info {
+            flex: 0 0 350px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border-radius: 12px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .cover {
+            width: 100%;
+            aspect-ratio: 1;
+            background: #111;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--accent);
+            text-shadow: 0 0 15px var(--accent);
+            text-align: center;
+        }
+
+        .track-list {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+        }
+
+        .track-row {
+            display: grid;
+            grid-template-columns: 40px 1fr auto;
+            padding: 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-bottom: 10px;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .track-row:active { transform: scale(0.98); background: rgba(140, 25, 255, 0.2); }
+
+        .t-num { color: #555; font-size: 0.8rem; }
+        .t-name { font-weight: 700; font-size: 1.1rem; }
+        .t-lock { font-size: 0.7rem; color: var(--accent); letter-spacing: 1px; }
+
+        /* Модалки */
+        #pass-modal, #lyrics-modal {
+            position: fixed;
+            inset: 0;
+            display: none;
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(20px);
+        }
+
+        #passInput {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--accent);
+            color: white;
+            font-size: 3rem;
+            text-align: center;
+            outline: none;
+            width: 200px;
+            letter-spacing: 8px;
+        }
+
+        .modal-content {
+            width: 100%;
+            height: 100%;
+            padding: 40px 20px;
+            overflow-y: auto;
+            max-width: 600px;
+        }
+
+        .m-text {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            color: #efefef;
+        }
+
+        .close-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 2.5rem;
+            cursor: pointer;
+            z-index: 2100;
+        }
+
+        /* Адаптация под ТЕЛЕФОНЫ */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+                height: auto;
+                padding: 15px;
+            }
+            .side-info {
+                flex: none;
+                padding: 20px;
+                margin-bottom: 10px;
+            }
+            .cover {
+                width: 120px;
+                height: 120px;
+                margin: 0 auto 15px;
+                font-size: 1.2rem;
+            }
+            .side-info h1 { text-align: center; font-size: 1.8rem; }
+            .side-info p { text-align: center; }
+            .track-list { overflow-y: visible; }
+            .t-name { font-size: 1rem; }
+            .m-text { font-size: 1.1rem; padding-bottom: 100px; }
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <div class="bg-layer"></div>
+
+    <div class="main-container">
+        <div class="side-info">
+            <div class="cover">OVER<br>EXPOSED</div>
+            <h1>OVEREXPOSED</h1>
+            <p style="opacity:0.5;">Album • 2026</p>
+            <p style="opacity:0.3; font-size: 0.7rem;">177cm Perspective</p>
+        </div>
+
+        <div class="track-list">
+            <div class="track-row" onclick="tryOpen(0)"><span class="t-num">01</span><span class="t-name">нахуй ты живёшь?</span><span class="t-lock">LOCKED</span></div>
+            <div class="track-row" onclick="tryOpen(1)"><span class="t-num">02</span><span class="t-name">another soul source</span><span class="t-lock">LOCKED</span></div>
+            <div class="track-row" onclick="tryOpen(2)"><span class="t-num">03</span><span class="t-name">скала</span><span class="t-lock">LOCKED</span></div>
+            <div class="track-row" onclick="tryOpen(3)"><span class="t-num">04</span><span class="t-name">отвёртка</span><span class="t-lock">LOCKED</span></div>
+            <div class="track-row" onclick="tryOpen(4)"><span class="t-num">05</span><span class="t-name">12 месяцев</span><span class="t-lock">LOCKED</span></div>
+        </div>
+    </div>
+
+    <div id="pass-modal">
+        <div style="text-align: center;">
+            <p style="opacity: 0.5; font-size: 0.7rem; letter-spacing: 2px;">RESTRICTED CONTENT</p>
+            <input type="password" id="passInput" maxlength="4" placeholder="••••">
+            <p onclick="document.getElementById('pass-modal').style.display='none'" style="margin-top:40px; opacity:0.3;">CANCEL</p>
+        </div>
+    </div>
+
+    <div id="lyrics-modal">
+        <span class="close-btn" onclick="closeLyrics()">&times;</span>
+        <div class="modal-content">
+            <div id="mTitle" style="color:var(--accent); font-weight:900; margin-bottom:30px; letter-spacing:1px;"></div>
+            <div class="m-text" id="mText"></div>
+        </div>
+    </div>
+
+    <script>
+        const lyrics = [
+            { t: "нахуй ты живёшь?", l: `Смотрю на этот мир сквозь экран, тут всё слишком slow\nЯ не ищу коннект, я просто ловлю свой flow\nВижу типа в костюме, он вечно куда-то бежит\nВ его глазах пустота, он просто в моменте дрожит.\n\nПодхожу к зеркалу, шепотом: "Чувак, ты кто?"\nВ этой очереди за счастьем ты явно стоишь не в то\nЯ смотрю на них сверху, мой взгляд как немой вопрос:\n"Нахуй ты живёшь", если ты до себя не дорос?\n\nЭто Real Talk, без лишних прикрас и масок\nМоя жизнь - это RAW, тут не нужно ярких красок\nТы ищешь profit там, где давно лишь пепел и прах\nНо euroq видит свет даже в самых темных углах.\n\nЧувак, нахуй ты живёшь, если нет искры внутри?\nЯ сжигаю их правила, просто на это смотри\nEnglish words в моей речи - это мой личный vibe\nЯ не подхожу под стандарт, я - это другой drive.\n\nДа, это мой способ общения. \nЧувак... \nПросто спроси себя: нахуй ты живёшь?` },
+            { t: "another soul source", l: `Фонари как искры режут эту темноту,\nЯ в своём скафандре, я набрал высоту.\nВетер в капюшоне шепчет: «Ты на том берегу»,\nЯ от серых будней в свой аквариум бегу.\n\nСемёрка в зеркалах отражает мой путь,\nВ этом лабиринте мне уже не уснуть.\nМир - это конструктор, я меняю детали,\nПока вы на старте - я уже за гранью стали.\n\nЧёрные чернила — это нефть моих идей,\nЯ фильтрую мысли, я фильтрую людей.\nТут не важен прайс, тут важна лишь подача,\nЕсли ты пустой - не поможет удача.\n\nЗвёзды над домами как битые пиксели,\nМы в этой системе слишком сильно зависли.\nНо мой Juice не сохнет, он питает мотор,\nЯ пишу свой код, я выхожу во двор.\n\nНикаких границ, только чистое поле,\nЯ нашёл свой ключ, я теперь на воле.\nAnother soul source - это мой кислород,\nЯ иду один, но я иду вперёд.` },
+            { t: "скала", l: `Она толкает в плечо - я как скала \nНо ради неё я сегодня упал  Золото Chrome, в сумке Stussy финал  \nЯ выше на голову, но я проиграл\n\nПод ногами хаки - это мои траки, Вечерний свет липнет на линзы, как знаки. 177, я смотрю только сверху, Но в этом сугробе я прошел твою проверку.\n\nПальцы на ремне, Stussy плотно к боку, В этой тишине от рофлов больше проку. Ты рикошетишь назад, будто я стена, Но ты единственная, кому эта крепость дана.` },
+            { t: "отвёртка", l: `Снова синий фильтр, свет выкручен в Pro,\nЯ вижу этот мир через линзу, мне всё равно.\n177 сантиметров над уровнем их суеты,\nВ наушниках 8D, я сжигаю мосты.\n\nЯ помню, как был пылью, шумел в толпе пустых,\nНо теперь мой вайб — это холод и тихий стих.\nВы ищете коннект, но в розетках нет тока,\nЯ иду по району, мне не одиноко.\nМикро-шутеры лают, пытаясь задеть мой HH,\nНо я их не слышу, я в своем личном кэше.\nМой ник стоит тонны, ваш хайп — это фантики,\nВы просто массовка в этой дешевой романтике.\n\nСмотришь в глаза, но там только шторка,\nВы все на одно лицо, как штамповка.\nСтроите из себя сейфы, но есть одна оговорка:\nВаш замок можно открыть обычной отверткой.` },
+            { t: "12 месяцев", l: `12 месяцев \nЛистаю экран — старый чат, как улика,\nТам всего год назад всё было слишком дико.\nМамин шмот на плечах, я — шумный дурак,\nНе видел, как в твоих строчках сгущается мрак.\n\nТы писала про холод, про «пусто внутри»,\nЯ не слышал тогда, я считал фонари.\nТвоя фраза «болезнь» — как выстрел в упор,\nНо я был микро-шутером, нес перебор.\n\nСейчас я в HH, капюшон на глаза,\nВ тех логах застыла твоя битая слеза.\nЯ вырос на голову, смотрю на твой текст,\nИ в этом молчании — мой личный протест.\n\nМы рофлим в ТЦ, ты толкаешь в плечо,\nНо теперь я всё знаю, мне не горячо.\nТвой код разгадан, но я буду молчать,\nПросто рядом идти и тебя охранять.` }
+        ];
+
+        let current = null;
+        const pModal = document.getElementById('pass-modal');
+        const lModal = document.getElementById('lyrics-modal');
+        const pInput = document.getElementById('passInput');
+
+        function tryOpen(i) {
+            current = i;
+            pModal.style.display = 'flex';
+            pInput.focus();
+        }
+
+        pInput.addEventListener('input', () => {
+            if (pInput.value === '1201') {
+                pModal.style.display = 'none';
+                pInput.value = '';
+                document.getElementById('mTitle').innerText = lyrics[current].t;
+                document.getElementById('mText').innerText = lyrics[current].l;
+                lModal.style.display = 'flex';
+            }
+        });
+
+        function closeLyrics() { lModal.style.display = 'none'; }
+
+        document.addEventListener('keydown', e => {
+            if (e.ctrlKey && ['c','u','s','p','a'].includes(e.key)) e.preventDefault();
+            if (e.key === 'F12') e.preventDefault();
+        });
+    </script>
+</body>
+</html>
